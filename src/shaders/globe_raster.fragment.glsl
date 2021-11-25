@@ -10,4 +10,7 @@ void main() {
 #ifdef OVERDRAW_INSPECTOR
     gl_FragColor = vec4(1.0);
 #endif
+    if(v_pos0.x < 0.01 || v_pos0.y < 0.01) {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 0.8);
+    }
 }
