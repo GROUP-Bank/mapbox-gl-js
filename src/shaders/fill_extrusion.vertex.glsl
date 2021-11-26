@@ -4,14 +4,13 @@ uniform lowp vec3 u_lightpos;
 uniform lowp float u_lightintensity;
 uniform float u_vertical_gradient;
 uniform lowp float u_opacity;
-uniform float u_zoom_scale;
 
 attribute vec4 a_pos_normal_ed;
 attribute vec2 a_centroid_pos;
 
 #ifdef PROJECTION_GLOBE_VIEW
-attribute vec3 a_pos_3;          // Projected position on the globe
-attribute vec4 a_normal_offset;  // Surface normal at the position and height offset
+attribute vec3 a_pos_3;         // Projected position on the globe
+attribute vec3 a_pos_normal_3;  // Surface normal at the position
 
 uniform mat4 u_inv_rot_matrix;
 uniform vec2 u_merc_center;
@@ -64,10 +63,8 @@ void main() {
 #endif
 
 #ifdef PROJECTION_GLOBE_VIEW
-    // TODO: use zoom level based scaling to add minimum height uniformly
-    float scaling = 1.0 - min(u_zoom_scale / 5.0, 1.0);
-    float topOffset = float(t > 0.0) * 50000.0; //(a_normal_offset.w + pow(scaling, 2.0) * 500000.0 + 100000.0);
-    vec3 globeNormal = normalize(mix(a_normal_offset.xyz / 16384.0, u_up_dir, u_zoom_transition));
+    float topOffset = float(t > 0.0) * 50000.0;
+    vec3 globeNormal = normalize(mix(a_pos_normal_3 / 16384.0, u_up_dir, u_zoom_transition));
     vec3 globePos = a_pos_3 + globeNormal * (u_tile_up_scale * (pos.z + topOffset));
     vec3 mercPos = mercator_tile_position(u_inv_rot_matrix, pos.xy, u_tile_id, u_merc_center) + u_up_dir * u_tile_up_scale * pos.z;
 
